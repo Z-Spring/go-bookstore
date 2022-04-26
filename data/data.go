@@ -1,17 +1,22 @@
 package data
 
 import (
-	"database/sql"
-	"fmt"
-	"gorm.io/gorm"
+	"bookstore/model"
 	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
-func OpenDb()  {
-	/* dbname:="root:admin@tcp/bookstore?charset=utf8mb4&parseTime=True&loc=Local"
-	sql.Open("mysql",dbname)
-	fmt.Println() */
 
-	
+func init() {
+	var err error
+	dbname := "root:admin@tcp/bookstore?charset=utf8mb4&parseTime=True&loc=Local"
+	DB, err = gorm.Open(mysql.Open(dbname), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	if err = DB.AutoMigrate(&model.User{}, &model.Book{}); err != nil {
+		panic(err)
+	}
+
 }
