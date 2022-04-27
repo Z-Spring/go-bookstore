@@ -2,6 +2,7 @@ package data
 
 import (
 	"bookstore/model"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -15,8 +16,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	if err = DB.AutoMigrate(&model.User{}, &model.Book{}); err != nil {
+	if err = DB.AutoMigrate(&model.User{}, &model.Book{}, &model.Cart{}); err != nil {
 		panic(err)
 	}
-
 }
