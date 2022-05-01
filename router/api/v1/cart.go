@@ -3,11 +3,8 @@ package v1
 import (
 	"bookstore/data"
 	"bookstore/model"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
-	"time"
 )
 
 type CartInput struct {
@@ -30,8 +27,8 @@ func GetCart(c *gin.Context) {
 }
 func AddCart(c *gin.Context) {
 	var cartInput CartInput
-	uid := "c-" + strconv.FormatInt(time.Now().Unix(), 10)
-	fmt.Println(uid)
+	//uid := "c-" + strconv.FormatInt(time.Now().Unix(), 10)
+	//fmt.Println(uid)
 	// 将参数储存在cartInput结构体中
 	if err := c.ShouldBindJSON(&cartInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -45,6 +42,6 @@ func AddCart(c *gin.Context) {
 	}
 	data.DB.Create(&cart)
 	// 将uid插入到数据库中
-	data.DB.Model(&cart).Update("uid", uid)
+	//data.DB.Model(&cart).Update("uid", uid)
 	c.JSON(http.StatusOK, gin.H{"data": cart})
 }

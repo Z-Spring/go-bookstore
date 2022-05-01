@@ -22,5 +22,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码错误！"})
 		return
 	}
+	c.Redirect(http.StatusMovedPermanently, "https://www.baidu.com")
+
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }

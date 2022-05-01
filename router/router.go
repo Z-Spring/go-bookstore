@@ -8,6 +8,7 @@ import (
 
 func NewRouter() {
 	engine := gin.Default()
+	engine.Static("/static", "./static")
 	apiv1 := engine.Group("/api/v1")
 	{
 		apiv1.GET("/books", v1.GetAllBooks)
@@ -16,8 +17,7 @@ func NewRouter() {
 		apiv1.POST("/create", v1.CreateBook)
 
 		apiv1.POST("/login", v1.Login)
-
-		// apiv1.GET("/register", v1.GetAllBooks)
+		apiv1.POST("/register", v1.RegisterUsers)
 		// apiv1.POST("/register", v1.GetAllBooks)
 
 		apiv1.GET("/cart", v1.GetCart)
