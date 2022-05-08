@@ -3,6 +3,7 @@ package v1
 import (
 	"bookstore/data"
 	"bookstore/model"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -10,8 +11,8 @@ import (
 )
 
 type BookInput struct {
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+	Name  string  `json:"name" form:"name" binding:"required,max=100"`
+	Price float64 `json:"price" form:"price" binding:"required,max=300"`
 	//ImagePath string  `json:"image_path"`
 }
 
@@ -44,16 +45,10 @@ func UpdateBookById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "找不到这本书🍭"})
 		return
 	}
-	if err := c.ShouldBindJSON(&bookInput); err != nil {
+	if err := c.ShouldBind(&bookInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	/*data.DB.Model(&book).Select("Name", "Price", "ImagePath").Updates(
-	model.Book{
-		Name:      bookInput.Name,
-		Price:     bookInput.Price,
-		ImagePath: bookInput.ImagePath,
-	})*/
 	log.Println(bookInput)
 	data.DB.Model(&book).Update("price", bookInput.Price)
 	//data.DB.Model(&book).Updates(bookInput)  todo:why?
@@ -62,10 +57,11 @@ func UpdateBookById(c *gin.Context) {
 
 func CreateBook(c *gin.Context) {
 	var input BookInput
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println(input.Name)
 	book := model.Book{Name: input.Name, Price: input.Price}
 	data.DB.Create(&book)
 	c.JSON(http.StatusOK, gin.H{"data": book})

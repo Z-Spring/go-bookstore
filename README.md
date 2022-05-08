@@ -1,2 +1,3 @@
 # go-bookstore
-use golang to make a bookstore web
+use golang to build a bookstore web
+

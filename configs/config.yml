@@ -1,0 +1,5 @@
+JWT:
+  Secret: jkjk
+  Issuer: go-bookstore
+  Expire: 7200 #  s
+

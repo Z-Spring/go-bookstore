@@ -14,7 +14,7 @@ type RegisterInput struct {
 	Password string `json:"password,omitempty"`
 }
 
-/*func RegisterUsers(c *gin.Context) {
+/*func Register(c *gin.Context) {
 	var registerInput RegisterInput
 	uid := "u-" + strconv.FormatInt(time.Now().Unix(), 10)
 	if err := c.ShouldBindJSON(&registerInput); err != nil {
@@ -33,7 +33,7 @@ type RegisterInput struct {
 
 // TODO 缺少验证环节
 
-func RegisterUsers(c *gin.Context) {
+func Register(c *gin.Context) {
 	uid := "u-" + strconv.FormatInt(time.Now().Unix(), 10)
 	name := c.PostForm("name")
 	password := c.PostForm("password")

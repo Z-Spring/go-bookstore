@@ -13,16 +13,10 @@ func Login(c *gin.Context) {
 	password := c.PostForm("password")
 	log.Println(name)
 	var user model.User
-	/*data.DB.Where("name=? and password=?", name, password).First(&user)
-	if user.Name != name && user.Password != password {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码错误！"})
-		return
-	}*/
 	if err := data.DB.Where("name=? and password=?", name, password).First(&user).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码错误！"})
 		return
 	}
-	c.Redirect(http.StatusMovedPermanently, "https://www.baidu.com")
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
