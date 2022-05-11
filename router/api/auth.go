@@ -1,6 +1,7 @@
-package auth
+package api
 
 import (
+	"bookstore/auth"
 	"bookstore/data"
 	"bookstore/model"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,7 @@ func GetAuth(c *gin.Context) {
 		return
 	}
 
-	token, err := GenerateToken(name, password)
+	token, err := auth.GenerateToken(name, password)
 	if err != nil {
 		log.Println(err)
 	}
