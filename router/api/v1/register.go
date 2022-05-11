@@ -10,39 +10,25 @@ import (
 )
 
 type RegisterInput struct {
-	Name     string `json:"name,omitempty"`
-	Password string `json:"password,omitempty"`
+	Name     string `form:"name" binding:"required,min=1,max=20"`
+	Password string `form:"password" binding:"required,min=2,max=50"`
 }
 
-/*func Register(c *gin.Context) {
-	var registerInput RegisterInput
+func Register(c *gin.Context) {
 	uid := "u-" + strconv.FormatInt(time.Now().Unix(), 10)
-	if err := c.ShouldBindJSON(&registerInput); err != nil {
+	/*	name := c.PostForm("name")
+		password := c.PostForm("password")*/
+	var u RegisterInput
+	if err := c.ShouldBind(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	user := model.User{
-		UserName:     registerInput.UserName,
-		Password: registerInput.Password,
-	}
-	fmt.Println(registerInput.UserName)
-	data.DB.Create(&user)
-	data.DB.Model(&user).Update("uid", uid)
-	c.JSON(http.StatusOK, gin.H{"data": user})
-}*/
-
-// TODO 缺少验证环节
-
-func Register(c *gin.Context) {
-	uid := "u-" + strconv.FormatInt(time.Now().Unix(), 10)
-	name := c.PostForm("name")
-	password := c.PostForm("password")
-	user := model.User{
-		Name:     name,
-		Password: password,
+		Name:     u.Name,
+		Password: u.Password,
 	}
 	data.DB.Create(&user)
 	data.DB.Model(&user).Update("uid", uid)
 
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	c.JSON(http.StatusOK, gin.H{"data": u})
 }
