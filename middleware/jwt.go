@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func JWT() gin.HandlerFunc {
+func JWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			token string
@@ -21,23 +21,21 @@ func JWT() gin.HandlerFunc {
 		}
 		if token == "" {
 			err = errors.New("token为空")
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-
+			// 这里必须有err.Error()，否则不会输出错误信息
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"data": err.Error()})
 		} else {
 			_, err := auth.ParseToken(token)
 			if err != nil {
 				switch err.(*jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
 					UnauthorizedTokenTimeout := errors.New("token已超时")
-					c.JSON(http.StatusInternalServerError, gin.H{"error": UnauthorizedTokenTimeout})
+					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": UnauthorizedTokenTimeout.Error()})
 				default:
 					UnauthorizedTokenError := errors.New("token与实际不符")
-					c.JSON(http.StatusInternalServerError, gin.H{"error": UnauthorizedTokenError})
-
+					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": UnauthorizedTokenError.Error()})
 				}
 			}
 		}
-		//todo 什么意思？
 		c.Next()
 	}
 }

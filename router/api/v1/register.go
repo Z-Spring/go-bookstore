@@ -22,10 +22,10 @@ type RegisterInput struct {
 		return
 	}
 	user := model.User{
-		Name:     registerInput.Name,
+		UserName:     registerInput.UserName,
 		Password: registerInput.Password,
 	}
-	fmt.Println(registerInput.Name)
+	fmt.Println(registerInput.UserName)
 	data.DB.Create(&user)
 	data.DB.Model(&user).Update("uid", uid)
 	c.JSON(http.StatusOK, gin.H{"data": user})

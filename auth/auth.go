@@ -1,22 +1,33 @@
 package auth
 
 import (
+	"bookstore/data"
+	"bookstore/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 )
 
-type RequestAuth struct {
-	Secret string `json:"secret,omitempty"`
+type UserInfo struct {
+	Name     string `form:"name" binding:"required,min=3,max=10"`
+	Password string `form:"password" binding:"required,min=1,max=50"`
 }
 
 func GetAuth(c *gin.Context) {
-	var requestAuth RequestAuth
-	if err := c.ShouldBind(&requestAuth); err != nil {
-		log.Println(err)
+	name := c.PostForm("name")
+	password := c.PostForm("password")
+	var u UserInfo
+	if err := c.ShouldBind(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := GenerateToken(requestAuth.Secret)
+	var user model.User
+	if err := data.DB.Where("name=? and password=?", u.Name, u.Password).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码错误！"})
+		return
+	}
+
+	token, err := GenerateToken(name, password)
 	if err != nil {
 		log.Println(err)
 	}

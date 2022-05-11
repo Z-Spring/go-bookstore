@@ -3,13 +3,14 @@ package auth
 import (
 	"bookstore/global"
 	"bookstore/utils"
+	"fmt"
 	"github.com/golang-jwt/jwt/v4"
-	"log"
 	"time"
 )
 
 type Claims struct {
-	JwtSecret string `json:"jwtSecret,omitempty"`
+	UserName string `json:"userName,omitempty"`
+	Password string `json:"password,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -17,16 +18,17 @@ func GetJWTSecret() []byte {
 	return []byte(global.JwtSetting.Secret)
 }
 
-func GenerateToken(jwtSecret string) (string, error) {
-	log.Println(global.JwtSetting.Expire)
+func GenerateToken(username, password string) (string, error) {
 	expireTime := time.Now().Add(global.JwtSetting.Expire)
 	claims := Claims{
-		JwtSecret: utils.EncodeMd5(jwtSecret),
+		UserName: utils.EncodeMd5(username),
+		Password: utils.EncodeMd5(password),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expireTime),
 			Issuer:    global.JwtSetting.Issuer,
 		},
 	}
+	//token, err2 := jwt.New(jwt.SigningMethodHS256).SignedString(GetJWTSecret())
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := tokenClaims.SignedString(GetJWTSecret())
 	return token, err
@@ -40,7 +42,9 @@ func ParseToken(token string) (*Claims, error) {
 		return nil, err
 	}
 	if tokenClaims != nil {
+		//  tokenClaims.Claims.(*Claims)    类型断言  x.(y)
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+			fmt.Println("ParseToken: ", claims.UserName)
 			return claims, nil
 		}
 	}

@@ -1,5 +1,5 @@
 JWT:
-  Secret: jkjk
+  Secret: "sdfasd?<L_PN';g67b j"
   Issuer: go-bookstore
   Expire: 7200 #  s
 
