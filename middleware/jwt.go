@@ -14,10 +14,10 @@ func JWTMiddleware() gin.HandlerFunc {
 			token string
 			err   error
 		)
-		if s, exist := c.GetQuery("token"); exist {
+		if s, exist := c.GetQuery("Authorization"); exist {
 			token = s
 		} else {
-			token = c.GetHeader("token")
+			token = c.GetHeader("Authorization")
 		}
 		if token == "" {
 			err = errors.New("token为空")

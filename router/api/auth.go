@@ -32,6 +32,12 @@ func GetAuth(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	c.JSON(http.StatusOK, gin.H{"jwt": token})
+	//c.Header("Authorization", "Bearer "+token)
+	cookie := http.Cookie{
+		Name:  "Authorization",
+		Value: token,
+	}
+	http.SetCookie(c.Writer, &cookie)
+	//c.JSON(http.StatusOK, gin.H{"jwt": token})
 
 }

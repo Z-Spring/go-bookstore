@@ -3,7 +3,6 @@ package auth
 import (
 	"bookstore/global"
 	"bookstore/utils"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"time"
 )
@@ -44,7 +43,6 @@ func ParseToken(token string) (*Claims, error) {
 	if tokenClaims != nil {
 		//  tokenClaims.Claims.(*Claims)    类型断言  x.(y)
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
-			fmt.Println("ParseToken: ", claims.UserName)
 			return claims, nil
 		}
 	}

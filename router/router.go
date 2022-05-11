@@ -11,15 +11,17 @@ import (
 func NewRouter() {
 	engine := gin.Default()
 	engine.Static("/static", "./static")
-
-	engine.POST("/auth", api.GetAuth)
-	engine.POST("/register", v1.Register)
+	{
+		engine.POST("/auth", api.GetAuth)
+		engine.POST("/register", v1.Register)
+		engine.GET("/books", v1.GetAllBooks)
+	}
 
 	apiv1 := engine.Group("/api/v1")
 	apiv1.Use(middleware.JWTMiddleware())
 	{
 		// book
-		apiv1.GET("/books", v1.GetAllBooks)
+		//apiv1.GET("/books", v1.GetAllBooks)
 		apiv1.GET("/books/:id", v1.GetBookById)
 		apiv1.PATCH("/books/:id", v1.UpdateBookById)
 		apiv1.POST("/create", v1.CreateBook)
