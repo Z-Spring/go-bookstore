@@ -8,4 +8,11 @@ type JwtSettings struct {
 	Expire time.Duration
 }
 
-var JwtSetting *JwtSettings
+type ServerSettings struct {
+	RunMode string
+}
+
+var (
+	JwtSetting    *JwtSettings
+	ServerSetting *ServerSettings
+)

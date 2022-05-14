@@ -2,4 +2,7 @@ JWT:
   Secret: "sdfasd?<L_PN';g67b j"
   Issuer: go-bookstore
   Expire: 7200 #  s
+Server:
+  RunMode: debug2 # 开发模式   release 为生产环境
+
 

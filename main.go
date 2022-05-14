@@ -7,9 +7,13 @@ import (
 )
 
 func init() {
-	if err := settings.GetSettings(); err != nil {
+	if err := settings.GetJwtSettings(); err != nil {
 		log.Println(err)
 	}
+	if err := settings.GetServerSettings(); err != nil {
+		log.Println(err)
+	}
+
 }
 func main() {
 	router.NewRouter()
