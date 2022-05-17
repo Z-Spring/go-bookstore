@@ -2,13 +2,24 @@ package router
 
 import (
 	"bookstore/global"
+	"bookstore/limiter"
 	"bookstore/middleware"
 	"bookstore/mylog"
 	"bookstore/router/api"
 	v1 "bookstore/router/api/v1"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/time/rate"
 	"time"
 )
+
+var m = limiter.MyLimiter{
+	Limiter:      rate.NewLimiter(1, 2),
+	LastGetToken: time.Now(),
+	RoutePath:    "/books",
+	RoutePathLimiter: limiter.RoutePathLimiter{
+		LimiterBuckets: make(map[string]int),
+	},
+}
 
 func NewRouter() {
 	logger, _ := mylog.NewZapProduction()
@@ -21,7 +32,7 @@ func NewRouter() {
 		engine.Use(middleware.Log(logger, time.RFC3339, true), gin.Recovery())
 	}
 
-	//engine.Use(middleware.LogToEsMiddleware())
+	engine.Use(middleware.RateLimiter(m))
 	engine.Static("/static", "./static")
 	{
 		engine.POST("/auth", api.GetAuth)
