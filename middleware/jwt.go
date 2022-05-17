@@ -20,9 +20,9 @@ func JWTMiddleware() gin.HandlerFunc {
 			token = c.GetHeader("Authorization")
 		}
 		if token == "" {
-			err = errors.New("token为空")
+			err = errors.New("未登录，请登录后查看")
 			// 这里必须有err.Error()，否则不会输出错误信息
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"data": err.Error()})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		} else {
 			_, err := auth.ParseToken(token)
 			if err != nil {
@@ -35,6 +35,8 @@ func JWTMiddleware() gin.HandlerFunc {
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": UnauthorizedTokenError.Error()})
 				}
 			}
+			// TODO 要不要将用户信息返回
+			//c.JSON(http.StatusOK, gin.H{"userName": data.UserName})
 		}
 		c.Next()
 	}

@@ -32,7 +32,6 @@ func GetAuth(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	//c.Header("Authorization", "Bearer "+token)
 	cookie := http.Cookie{
 		Name:  "Authorization",
 		Value: token,
