@@ -12,16 +12,17 @@ import (
 	"time"
 )
 
-var m = limiter.MyLimiter{
-	Limiter:      rate.NewLimiter(1, 2),
-	LastGetToken: time.Now(),
-	RoutePath:    "/books",
-	RoutePathLimiter: limiter.RoutePathLimiter{
-		LimiterBuckets: make(map[string]int),
-	},
-}
-
 func NewRouter() {
+	// rateLimiter init
+	var m = limiter.MyLimiter{
+		Limiter:      rate.NewLimiter(global.RateLimiterSetting.RateLimit, global.RateLimiterSetting.Buckets),
+		LastGetToken: time.Now(),
+		RoutePath:    global.RateLimiterSetting.RoutePath,
+		RoutePathLimiter: limiter.RoutePathLimiter{
+			LimiterBuckets: make(map[string]int),
+		},
+	}
+
 	logger, _ := mylog.NewZapProduction()
 	engine := gin.New()
 	gin.ForceConsoleColor()

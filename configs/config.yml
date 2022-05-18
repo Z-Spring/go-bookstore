@@ -3,6 +3,11 @@ JWT:
   Issuer: go-bookstore
   Expire: 7200 #  s
 Server:
-  RunMode: debug2 # 开发模式   release 为生产环境
-
-
+  RunMode: debug2         # 开发模式   release 为生产环境
+#Log:
+#  DirPath: logs/
+#  FilePathSuffix: .log
+RateLimiter:
+  RoutePath: /books
+  RateLimit: 2
+  Buckets: 3
