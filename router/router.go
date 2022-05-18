@@ -34,6 +34,7 @@ func NewRouter() {
 	}
 
 	engine.Use(middleware.RateLimiter(m))
+	engine.Use(middleware.RouteTimeOut(1 * time.Minute))
 	engine.Static("/static", "./static")
 	{
 		engine.POST("/auth", api.GetAuth)
