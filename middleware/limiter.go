@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-func RateLimiter(m limiter.MyLimiter) gin.HandlerFunc {
+func RateLimiter(m *limiter.MyLimiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		l := m.GetLimiter()
-		_, ok := m.GetRoutePathBuckets(m.RoutePath)
+		ok := m.GetRoutePathBuckets(m.RoutePath)
 		if ok {
 			if !l.Allow() {
 				log.Println(m.RoutePath, ": 限流啦")

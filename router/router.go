@@ -7,8 +7,15 @@ import (
 	"bookstore/mylog"
 	"bookstore/router/api"
 	v1 "bookstore/router/api/v1"
+	"context"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 )
 
@@ -19,7 +26,8 @@ func NewRouter() {
 		LastGetToken: time.Now(),
 		RoutePath:    global.RateLimiterSetting.RoutePath,
 		RoutePathLimiter: limiter.RoutePathLimiter{
-			LimiterBuckets: make(map[string]int),
+			//LimiterBuckets: make(map[string]int),
+			LimiterBuckets: sync.Map{},
 		},
 	}
 
@@ -33,7 +41,7 @@ func NewRouter() {
 		engine.Use(middleware.Log(logger, time.RFC3339, true), gin.Recovery())
 	}
 
-	engine.Use(middleware.RateLimiter(m))
+	engine.Use(middleware.RateLimiter(&m))
 	engine.Use(middleware.RouteTimeOut(1 * time.Minute))
 	engine.Static("/static", "./static")
 	{
@@ -59,6 +67,29 @@ func NewRouter() {
 		mylog.Println(err)
 		return
 	}*/
-	engine.Run(":8080")
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: engine,
+	}
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("server listen err:%s", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	<-quit
+	log.Println("shutting down server...")
+
+	ctx, channel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer channel()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatal("server shutdown error")
+	}
+	log.Fatal("server exiting...")
 
 }
