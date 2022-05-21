@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"time"
 )
 
 type UserInfo struct {
@@ -32,9 +33,12 @@ func GetAuth(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
+	var expires = time.Now().Add(24 * 60 * time.Minute)
 	cookie := http.Cookie{
-		Name:  "Authorization",
-		Value: token,
+		Name:     "Authorization",
+		Value:    token,
+		Expires:  expires,
+		HttpOnly: true,
 	}
 	http.SetCookie(c.Writer, &cookie)
 	//c.JSON(http.StatusOK, gin.H{"jwt": token})
