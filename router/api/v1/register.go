@@ -18,7 +18,7 @@ func Register(c *gin.Context) {
 	uid := "u-" + strconv.FormatInt(time.Now().Unix(), 10)
 	var u RegisterInput
 	if err := c.ShouldBind(&u); err != nil {
-		//todo 将此处error英文改成中文
+		// todo 将此处error英文改成中文
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

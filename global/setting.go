@@ -13,6 +13,7 @@ type JwtSettings struct {
 
 type ServerSettings struct {
 	RunMode string
+	Port    string
 }
 
 type RateLimiterSettings struct {
@@ -21,8 +22,13 @@ type RateLimiterSettings struct {
 	Buckets   int
 }
 
+type TimeOutSettings struct {
+	TimeOut time.Duration
+}
+
 var (
 	JwtSetting         *JwtSettings
 	ServerSetting      *ServerSettings
 	RateLimiterSetting RateLimiterSettings
+	TimeOutSetting     TimeOutSettings
 )

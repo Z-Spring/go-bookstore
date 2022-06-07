@@ -42,8 +42,9 @@ func NewRouter() {
 	}
 
 	engine.Use(middleware.RateLimiter(&m))
-	engine.Use(middleware.RouteTimeOut(1 * time.Minute))
+	engine.Use(middleware.RouteTimeOut(global.TimeOutSetting.TimeOut))
 	engine.Static("/static", "./static")
+
 	{
 		engine.POST("/auth", api.GetAuth)
 		engine.POST("/register", v1.Register)
@@ -69,13 +70,13 @@ func NewRouter() {
 	}*/
 
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    global.ServerSetting.Port,
 		Handler: engine,
 	}
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server listen err:%s", err)
+			log.Fatalf("server listen err: %s", err)
 		}
 	}()
 
@@ -85,8 +86,8 @@ func NewRouter() {
 	<-quit
 	log.Println("shutting down server...")
 
-	ctx, channel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer channel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatal("server shutdown error")
 	}

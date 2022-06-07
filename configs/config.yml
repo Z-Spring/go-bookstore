@@ -3,11 +3,18 @@ JWT:
   Issuer: go-bookstore
   Expire: 7200 #  s
 Server:
-  RunMode: debug2         # 开发模式   release 为生产环境
-#Log:
-#  DirPath: logs/
-#  FilePathSuffix: .log
+  RunMode: debug        # 开发模式   release 为生产环境
+  Port: :8080
+Log:
+  DirPath: logs/
+  FilePathSuffix: .log
 RateLimiter:
   RoutePath: /books
   RateLimit: 2
-  Buckets: 3
+  Buckets: 30
+ContextTimeOut:
+  TimeOut: 3
+Redis:
+  host: http://localhost:6379
+  username:
+  password:

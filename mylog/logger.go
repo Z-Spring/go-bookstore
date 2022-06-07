@@ -95,7 +95,7 @@ func NewZapProduction() (*zap.Logger, error) {
 	//todo 这里读到buf也不是一个好选择
 	//log2 := make(chan zapcore.WriteSyncer, 10)
 	writer := zapcore.AddSync(os.Stdout)
-	Log2 <- os.Stdout
+	//Log2 <- os.Stdout
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = TimeEncoder
 	// Level 大写

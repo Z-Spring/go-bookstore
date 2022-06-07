@@ -36,7 +36,7 @@ func JWTMiddleware() gin.HandlerFunc {
 				}
 			}
 			// TODO 要不要将用户信息返回
-			//c.JSON(http.StatusOK, gin.H{"userName": data.UserName})
+			//c.JSON(http.StatusOK, gin.H{"userName": claims.UserName})
 		}
 		c.Next()
 	}

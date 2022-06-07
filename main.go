@@ -6,6 +6,12 @@ import (
 	"log"
 )
 
+var (
+	port   string
+	mode   string
+	config string
+)
+
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
@@ -18,6 +24,9 @@ func init() {
 		log.Println(err)
 	}
 	if err := settings.GetRateLimiterSettings(); err != nil {
+		log.Println(err)
+	}
+	if err := settings.GetContextTimeout(); err != nil {
 		log.Println(err)
 	}
 }

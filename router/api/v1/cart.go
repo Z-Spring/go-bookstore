@@ -15,6 +15,7 @@ type CartInput struct {
 	SumPrice float64 `json:"sum_price,omitempty"`
 }
 
+// GetCart todo: 为什么这里的id是常量？应该改成变量啊 5.20
 func GetCart(c *gin.Context) {
 	var cart model.Cart
 	const id = 1
