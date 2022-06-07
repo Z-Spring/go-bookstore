@@ -3,11 +3,13 @@ package v1
 import (
 	"bookstore/data"
 	"bookstore/model"
-	"fmt"
+	"bookstore/utils"
+	"context"
+	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type BookInput struct {
@@ -16,9 +18,40 @@ type BookInput struct {
 	//ImagePath string  `json:"image_path"`
 }
 
+var ctx = context.Background()
+var res = utils.NewRedis()
+
 func GetAllBooks(c *gin.Context) {
 	var book []model.Book
+	if result, err := res.Get(ctx, "books").Result(); err == nil {
+		err := json.Unmarshal([]byte(result), &book)
+		if err != nil {
+			log.Printf("unmarshal error,%s", err)
+		}
+		log.Printf("got books from redis: %v", book)
+		c.JSON(http.StatusOK, gin.H{"data": book})
+		return
+	}
+	log.Println("can't find books in redis! search books from mysql")
 	data.DB.Find(&book)
+
+	data, err2 := json.Marshal(book)
+	if err2 != nil {
+		log.Println("marshal error", err2)
+	}
+	err := res.Set(ctx, "books", data, 10*time.Minute).Err()
+	if err != nil {
+		log.Printf("redis set error:%s\n", err)
+	}
+	resBook, err := res.Get(ctx, "books").Result()
+	if err != nil {
+		log.Printf("redis get book error,%s", err)
+	}
+	err = json.Unmarshal([]byte(resBook), &book)
+	if err != nil {
+		log.Printf("unmarshal error,%s", err)
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": book})
 }
 
@@ -61,7 +94,7 @@ func CreateBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println(input.Name)
+	log.Println(input.Name)
 	book := model.Book{Name: input.Name, Price: input.Price}
 	data.DB.Create(&book)
 	c.JSON(http.StatusOK, gin.H{"data": book})
